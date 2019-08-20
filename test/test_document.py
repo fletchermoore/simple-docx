@@ -30,8 +30,16 @@ class DocumentTestCase(unittest.TestCase):
         #print(l)
         self.assertEqual(l, 18)
 
+    def test_extracts_rels(self):
+        """ relationships are properly imported """
+        doc = Document('sampleDoc.docx')
+        self.assertEqual(doc.rels['rId5'][1], "media/image1.png")
 
-
+    def test_get_image(self):
+        """ can retreive image data by rId """
+        doc = Document('sampleDoc.docx')
+        # probably better to assert it is some kind of binary
+        self.assertNotEqual(doc.get_image('rId5'), None)
 
 
 

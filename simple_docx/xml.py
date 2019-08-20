@@ -11,5 +11,4 @@ def get_attr_val(elem, suffix):
     """ gets the attribute value given by suffix from the element
     uses the namespace from the element tag """
     namespace = elem.tag.split('}')[0] + '}'
-    print(namespace)
     return elem.get(namespace + suffix)

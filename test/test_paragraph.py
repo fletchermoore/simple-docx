@@ -32,7 +32,17 @@ class ParagraphTestCase(unittest.TestCase):
         doc = Document('sampleDoc.docx')
         first_p_elem = doc.paragraphs[0]
         paragraph = Paragraph(first_p_elem)
-        self.assertEqual(paragraph.text, "subject")
+        self.assertEqual(paragraph.runs[0].text, "subject")
+
+    def test_parse_runs_with_inline_image(self):
+        """ correctly parse simple inline image in run """
+        doc = Document('sampleDoc.docx')
+        pElem = doc.paragraphs[13]
+        paragraph = Paragraph(pElem)
+        imageRef = paragraph.runs[2].text
+        runType = paragraph.runs[2].type
+        self.assertEqual(runType, "image")
+        self.assertEqual(imageRef, "rId5")
 
 
 if __name__ == '__main__':

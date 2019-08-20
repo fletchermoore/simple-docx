@@ -13,11 +13,13 @@ class Document:
         self.relsXml = ""
         self.paragraphs = []
         self.mediaFiles = {}
+        self.rels = {}
 
         self.load(path)
 
         if self.is_loaded():
             self.paragraphs = self.collect_p_elems(self.docXml)
+            self.rels = self.build_rel_dict(self.relsXml)
 
 
     def load(self, path):
@@ -35,7 +37,7 @@ class Document:
                 names = z.namelist()
                 for name in names:
                     if name.startswith('word/media/'):
-                        filename = name.split('/')[-1]
+                        filename = name[5:] # remove "word/"
                         self.mediaFiles[filename] = z.read(name)
                 z.close()
             except:
@@ -54,6 +56,31 @@ class Document:
                 if is_tag_match(grandchild, 'p'):
                     paragraphs.append(grandchild)
         return paragraphs
+
+
+    def build_rel_dict(self, xml):
+        rels = {}
+        root = ET.fromstring(xml) # Relationships
+        for child in root:
+            if is_tag_match(child, '}Relationship'):
+                rId = child.get('Id')
+                rType = child.get('Type')
+                target = child.get('Target')
+                rels[rId] = (rType, target)
+        return rels
+
+
+    # given rId, probably from a run, return the image file
+    # if keyError (not found) return None
+    def get_image(self, rId):
+        try:
+            target = self.rels[rId][1]
+            return self.mediaFiles[target]
+        except:
+            return None
+
+
+
 
 
 
